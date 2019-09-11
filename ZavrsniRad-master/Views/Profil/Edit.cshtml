@@ -1,0 +1,159 @@
+﻿@model Vozilo
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Promeni informacije</h1>
+
+<h4>Vozilo</h4>
+<hr />
+<div class="container">
+    <div class="row">
+            <form asp-action="Edit" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="VoziloId" />
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="MarkaId" class="control-label">Marka</label>
+                        <select id="Select1" asp-for="MarkaId" class="form-control" asp-items="ViewBag.MarkaId"></select>
+                        <span asp-validation-for="MarkaId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="ModelId" class="control-label">Model</label>
+                        <div id="div1">
+                            <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                        </div>
+                        <span asp-validation-for="ModelId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="TipVozilaId" class="control-label">Tip Vozila</label>
+                        <select asp-for="TipVozilaId" class="form-control" asp-items="ViewBag.TipVozilaId"></select>
+                        <span asp-validation-for="TipVozilaId" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="form-group" hidden>
+                    <label asp-for="KorisnikId" class="control-label"></label>
+                    <input asp-for="KorisnikId" class="form-control" />
+                    <span asp-validation-for="KorisnikId" class="text-danger"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="Kubikaza" class="control-label"></label>
+                        <input asp-for="Kubikaza" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" class="form-control" />
+                        <span asp-validation-for="Kubikaza" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="Snaga" class="control-label"></label>
+                        <input asp-for="Snaga" class="form-control" />
+                        <span asp-validation-for="Snaga" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="Kilometraza" class="control-label"></label>
+                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" asp-for="Kilometraza" class="form-control" />
+                        <span asp-validation-for="Kilometraza" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="Pogon" class="control-label"></label>
+                        <input asp-for="Pogon" class="form-control" />
+                        <span asp-validation-for="Pogon" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="Menjac" class="control-label"></label>
+                        <input type="text" asp-for="Menjac" class="form-control" />
+                        <span asp-validation-for="Menjac" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label asp-for="BrojBrzina" class="control-label">Broj Brzina</label>
+                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" asp-for="BrojBrzina" class="form-control" />
+                        <span asp-validation-for="BrojBrzina" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label asp-for="Cena" class="control-label">Cena</label>
+                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" asp-for="Cena" class="form-control" />
+                        <span asp-validation-for="Cena" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="File1" class="control-label">Odaberi sliku</label>
+                        <input id="File1" type="file" name="odabranaSlika" class="form-control" onload="@Model.SlikaTip" onchange="PrikaziSliku()" required accept=".jpg, .gif, .bmp"/>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <img id="img1" width="250" style="padding:5px" height="200" src="@($"/Profil/CitajSliku/{Model.VoziloId}")" alt="Slika" />
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label asp-for="Opis" class="control-label"></label>
+                        <textarea asp-for="Opis" cols="30" rows="10" class="form-control"></textarea>
+                        <span asp-validation-for="Opis" class="text-danger"></span>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="submit" value="Sacuvaj" class="btn btn-primary" style="padding-right:5px;"/>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-info" style="padding-left:5px;">Nazad na oglase</a>
+                    </div>
+                </div>
+                
+            </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+<script>
+    function PrikaziSliku() {
+            var File1 = document.getElementById("File1");
+            var img1 = document.getElementById("img1");
+            var fajlSlike = File1.files[0];
+            if (fajlSlike != null > 0 && fajlSlike.type.match(/image.*/)) {
+                var reader = new FileReader();
+                reader.readAsDataURL(fajlSlike);
+                reader.onload = function () {
+                    img1.src = reader.result;
+                };
+            }
+            else {
+                img1.setAttribute("src", "");
+            }
+        }
+        function Validacija() {
+            var src = $("#img1").attr("src");
+            if (src == "") {
+                $("#p1").html("Odaberite sliku");
+                return false;
+            }
+            else {
+                return true;
+            }
+    }
+
+    $(document).ready(function () {
+            $("#Select1").change(function () {
+                var markaId = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/PrikaziModel/",
+                    dataType: "html",
+                    data: { "markaId": markaId },
+                    success: function (model) {
+                        $("#div1").empty();
+                        $("#div1").html(model);
+                    }
+                });
+            });
+        });
+</script>
+}

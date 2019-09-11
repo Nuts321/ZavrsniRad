@@ -1,0 +1,112 @@
+﻿@model IEnumerable<Vozilo>
+@inject SignInManager<ApplicationUser> sm
+@inject UserManager<ApplicationUser> um
+@{ 
+    var korisnik = await um.GetUserAsync(User);
+}
+    <div class="container padding">
+        <div class="row">
+            @*<div class="col-md-3">*@
+                <form asp-action="Filtriraj" asp-controller="Home" method="post" data-ajax="true" data-ajax-update="#prikazi">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <select id="Select1" name="MarkaId" asp-items="@ViewBag.Marka" class="form-control">
+                                <option value="0">--Izaberi Marku--</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6" id="div1">
+                            <select class="form-control">
+                                <option value="0">--Izaberite Model--</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="min">Unesite minimalnu cenu</label>
+                        <input class="form-control" type="text" placeholder="Minimalna cena" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="min" id="min" />
+                    </div>
+                    <div class="form-group">
+                        <label for="max">Unesite maksimalnu cenu</label>
+                        <input class="form-control" type="text" placeholder="Maksimalna cena" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="max" id="max" />
+                    </div>
+                    <input type="submit" class="btn btn-success" value="Posalji" />
+                </form>
+            @*</div>*@
+        </div>
+    </div>
+
+<br class="my-4"/>
+<br />
+<div class="container">
+    <div class="row" id="prikazi">
+        @if (Model != null)
+        {
+            @foreach (Vozilo v in Model)
+            {
+                <div class="col-md-4 col-xl-3 col-12 col-sm-6 mb-3">
+                    <div class="card bg-light" style="width:230px">
+                        <div class="card-header" style="padding:5px">
+                            <a asp-action="Details" asp-controller="Profil" asp-route-id="@v.VoziloId">
+                                <img width="200" style="padding:5px;margin-left:10px" height="150" src="@($"/Profil/CitajSliku/{v.VoziloId}")" alt="Slika" />
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <h5>Marka: @v.Marka.Naziv</h5>
+                            <h5>Model: @v.Modeli.Naziv</h5>
+                            <h5>Cena: @v.Cena e</h5>
+                            <a asp-route-id="@v.VoziloId" asp-action="Index" asp-controller="Komentar" class="btn btn-block btn-info">Prikazi Komentare</a>
+
+                            @if (sm.IsSignedIn(User))
+                            {
+                                @if (korisnik.Email == "admin@gmail.com")
+                                {
+                                    <a asp-route-id="@v.VoziloId" asp-action="Delete" asp-controller="Profil" class="btn btn-block btn-danger">Obrisi Oglas</a>
+                                }
+                                @if (korisnik.Id == v.KorisnikId)
+                                {
+                                    <a asp-route-id="@v.VoziloId" asp-action="Edit" asp-controller="Profil" class="btn btn-block btn-success">Promeni Oglas</a>
+                                    <a asp-route-id="@v.VoziloId" asp-action="Delete" asp-controller="Profil" class="btn btn-block btn-danger">Obrisi Oglas</a>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <h2 class="text-danger">
+                Nazalost nije postavljen ni jedan oglas!
+            </h2>
+
+        }
+    </div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+
+    <script src="~/lib/jquery-ajax-unobtrusive/dist/jquery.unobtrusive-ajax.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#Select1").change(function () {
+                var markaId = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/PrikaziModel/",
+                    dataType: "html",
+                    data: { "markaId": markaId },
+                    success: function (model) {
+                        $("#div1").empty();
+                        $("#div1").html(model);
+                    }
+                });
+            });
+        });
+    </script>
+}

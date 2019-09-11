@@ -1,0 +1,131 @@
+﻿@model AspNetUser
+@inject UserManager<ApplicationUser> um
+@{
+    ViewData["Title"] = "Details";
+    var korisnik =await um.GetUserAsync(User);
+}
+
+<h1>Profil</h1>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-5">
+            <h4>Profil</h4>
+            <hr />
+            <dl class="row">
+                <dt class="col-sm-2">
+                    Adresa
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Adresa
+                </dd>
+                <dt class="col-sm-2">
+                    Grad
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Grad
+                </dd>
+                <dt class="col-sm-2">
+                    Ime
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Ime
+                </dd>
+                <dt class="col-sm-2">
+                    Prezime
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Prezime
+                </dd>
+                <dt class="col-sm-2">
+                    Telefon
+                </dt>
+                <dd class="col-sm-10">
+                    @Model.Telefon
+                </dd>
+            </dl>
+        </div>
+        @if (korisnik.Id==Model.Id)
+        {
+            <div class="col-sm-3 mb-2">
+                <a class="btn btn-info" asp-action="Edit" asp-route-id="@Model.Id">Promeni Informacije</a>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="row">
+    @if (korisnik.Email == "admin@gmail.com")
+    {
+    <div class="col-md-4">
+        <form asp-action="DodajMarkuModelTip">
+            <div class="form-group">
+                <select id="Select1" name="MarkaId" class="form-control" asp-items="@ViewBag.Marka">
+                    <option value="0">--Izaberite Marku--</option>
+                </select>
+
+            </div>
+
+            <div id="div1" class="form-group">
+                <select class="form-control">
+                    <option value="0">--Izaberite Model--</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="NovaMarka">Popunite polje u koliko zelite da unesete novu Marku ili Model:</label>
+                <input class="form-control" id="NovaMarka" type="text" name="NovaMarkaModel" placeholder="Za Model, Marka mora biti izabrana." />
+            </div>
+            <input type="submit" class="btn btn-success" value="Dodaj" />
+        </form>
+    </div>
+
+    <div class="col-md-3 sm-2">
+        <form asp-action="DodajMarkuModelTip">
+            <div class="form-group">
+                <select name="TipId" class="form-control" asp-items="@ViewBag.Tip">
+                    <option value="0">--Izaberite Tip--</option>
+                </select>
+
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="NoviTip">Popunite polje u koliko zelite da unesete novi Tip vozila:</label>
+                <input class="form-control" id="NoviTip" type="text" name="NoviTip" />
+            </div>
+            <input type="submit" class="btn btn-success" value="Dodaj" />
+        </form>
+    </div>
+        }   
+</div>
+
+<div class="container">
+    <div id="oglas" class="row">
+
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $('#oglas').load('/Home/Filtriraj', { korisnikId: '@Model.Id' });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#Select1").change(function () {
+                var markaId = $(this).val();
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/PrikaziModel/",
+                    dataType: "html",
+                    data: { "markaId": markaId },
+                    success: function (model) {
+                        $("#div1").empty();
+                        $("#div1").html(model);
+                    }
+                });
+            });
+        });
+    </script>
+}

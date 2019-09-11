@@ -1,0 +1,79 @@
+﻿@model Vozilo
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<div class="container">
+    <h2>@Model.Marka.Naziv  @Model.Modeli.Naziv</h2>
+    <div class="row">
+        <div class="col-md-4 mb-5">
+            @*<img width="250" style="padding:5px" height="200" src="@($"/Profil/CitajSliku/{Model.VoziloId}")" alt="Slika" />*@
+            <img style="padding:5px;width:75%;height:75%" src="@($"/Profil/CitajSliku/{Model.VoziloId}")" alt="Slika" />
+
+            <br />
+            <label for="opis1" class="control-label">Opis</label>
+            <textarea readonly id="opsi1" cols="30" style="height:160px" rows="10" class="form-control">@Model.Opis</textarea>
+        </div>
+        <div class="col-md-4 mt-5 mb-5">
+            <table class="table table-striped border">
+                <tr>
+                    <th>Kubikaza</th>
+                    <td>@Model.Kubikaza</td>
+                </tr>
+                <tr>
+                    <th>Snaga</th>
+                    <td>@Model.Snaga</td>
+                </tr>
+                <tr>
+                    <th>Kilometraza</th>
+                    <td>@Model.Kilometraza</td>
+                </tr>
+                <tr>
+                    <th>Pogon</th>
+                    <td>@Model.Pogon</td>
+                </tr>
+                <tr>
+                    <th>Menjac</th>
+                    <td>@Model.Menjac</td>
+                </tr>
+                <tr>
+                    <th>Broj Brzina</th>
+                    <td>@Model.BrojBrzina</td>
+                </tr>
+                <tr>
+                    <th>Cena</th>
+                    <td>@Model.Cena e</td>
+                </tr>
+                <tr>
+                    <th>Tip Vozila</th>
+                    <td>@Model.TipVozila.Naziv</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-4 mt-5">
+            <a asp-route-id="@Model.VoziloId" asp-action="Index" style="padding:5px 0px 5px 0px;" asp-controller="Komentar" class="btn btn-block btn-info">Prikazi Komentare</a>
+            <a asp-route-id="@ViewBag.KorisnikId" asp-action="Details" asp-controller="AspNetUsers" style="padding:5px 0px 5px 0px;" class="btn btn-block btn-secondary">Pogledajte jos oglasa od korisnika.</a>
+            <br />
+            <div>
+                <span>Informacije o korisniku</span>
+                <table class="table table-info">
+                    <tr>
+                        <th>Ime</th>
+                        <td>@ViewBag.Ime</td>
+                    </tr>
+                    <tr>
+                        <th>Prezime</th>
+                        <td>@ViewBag.Prezime</td>
+                    </tr>
+                    <tr>
+                        <th>Telefon</th>
+                        <td>@ViewBag.Telefon</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+

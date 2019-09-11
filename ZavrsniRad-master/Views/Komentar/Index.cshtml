@@ -1,0 +1,80 @@
+﻿@model IEnumerable<Komentar>
+@inject SignInManager<ApplicationUser> sm
+@inject UserManager<ApplicationUser> um
+@{
+    ViewData["Title"] = "Index";
+    var korisnik = await um.GetUserAsync(User);
+}
+
+
+@if (Model != null)
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>
+                    Korisnik
+                </th>
+                <th>
+                    Komentar
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        @foreach (Komentar k in Model)
+        {
+            <tr>
+                <td>
+                    @k.Korisnik
+                </td>
+                <td>
+                    @k.Opis
+                </td>
+                <td>
+                    @if (sm.IsSignedIn(User))
+                    {
+                        @if (korisnik.Id == k.KorisnikId || korisnik.Email == "admin@gmail.com")
+                        {
+                            <a class="btn btn-danger" asp-action="Delete" asp-controller="Komentar" asp-route-id="@k.KomentarId">Obrisi</a>
+                            <a class="btn btn-success" asp-action="Edit" asp-controller="Komentar" asp-route-id="@k.KomentarId">Promeni</a>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@if (sm.IsSignedIn(User))
+{
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <form asp-action="Create" asp-controller="Komentar" method="post">
+                <div class="form-group" hidden>
+                    <input type="text" name="VoziloId" value="@ViewBag.VoziloId" />
+                </div>
+                <div class="form-group" hidden>
+                    <input type="text" name="KorisnikId" value="@korisnik.Id" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="Korisnik">Ime i prezime:</label>
+                    <input class="form-control" type="text" id="Korisnik" readonly name="Korisnik" value="@korisnik.Ime @korisnik.Prezime" />
+                </div>
+                <div class="form-group">
+                    <label for="Opis">Unesite Komentar:</label>
+                    <textarea id="Opis" name="Opis" class="form-control" cols="30" rows="10" required></textarea>
+                </div>
+                <button class="bnt btn-success form-control">Postavi Komentar</button>
+            </form>
+        </div>
+    </div>
+</div>
+    
+}
+else
+{
+    <h2 class="text-info">Da bi postavio komentar moras da se prijavis</h2>
+    <a class="btn btn-success" asp-area="Identity" asp-page="/Account/Login">Prijavi se</a>
+}
+

@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Vozilo>
+@inject SignInManager<ApplicationUser> sm
+@inject UserManager<ApplicationUser> um
+@{
+    var korisnik = await um.GetUserAsync(User);
+}
+
+@if (Model != null)
+{
+    @foreach (Vozilo v in Model)
+    {
+        <div class="col-md-4 col-xl-3 col-12 col-sm-6 mb-3">
+            <div class="card bg-light" style="width:230px">
+                <div class="card-header" style="padding:5px">
+                    <a asp-action="Details" asp-controller="Profil" asp-route-id="@v.VoziloId">
+                        <img width="200" style="padding:5px;margin-left:10px" height="150" src="@($"/Profil/CitajSliku/{v.VoziloId}")" alt="Slika" />
+                    </a>
+                </div>
+                <div class="card-body">
+                    <h5>Marka: @v.Marka.Naziv</h5>
+                    <h5>Model: @v.Modeli.Naziv</h5>
+                    <h5>Cena: @v.Cena e</h5>
+                    <a asp-route-id="@v.VoziloId" asp-action="Index" asp-controller="Komentar" class="btn btn-block btn-info">Prikazi Komentare</a>
+                    @if (sm.IsSignedIn(User))
+                    {
+                        @if (korisnik.Email == "admin@gmail.com")
+                        {
+                            <a asp-route-id="@v.VoziloId" asp-action="Delete" asp-controller="Profil" class="btn btn-block btn-danger">Obrisi Oglas</a>
+
+                        }
+                        @if (korisnik.Id == v.KorisnikId)
+                        {
+                            <a asp-route-id="@v.VoziloId" asp-action="Edit" asp-controller="Profil" class="btn btn-block btn-success">Promeni Oglas</a>
+                            <a asp-route-id="@v.VoziloId" asp-action="Delete" asp-controller="Profil" class="btn btn-block btn-danger">Obrisi Oglas</a>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <h2 class="text-danger">
+        Nazalost nije postavljen ni jedan oglas!
+    </h2>
+
+}
